@@ -1,9 +1,9 @@
-#PROYECTO.md — Plataforma de Publicación de Contactos para Servicios/Productos
-##1. Descripción General
+# PROYECTO.md — Plataforma de Publicación de Contactos para Servicios/Productos
+## 1. Descripción General
 
 Plataforma web donde usuarios (oferentes) publican sus datos de contacto y condiciones de pago para servicios y/o productos que ofrecen. La plataforma no procesa pagos ni actúa como pasarela: solo intermedia el descubrimiento y contacto entre oferente y comprador. El pago y la negociación final ocurren fuera de la app, entre las partes, usando el medio que el oferente haya declarado (Mercado Pago, PayPal, billetera personalizada, etc.).
 
-##2. Límites del Sistema (Alcance)
+## 2. Límites del Sistema (Alcance)
 2.1 Dentro del alcance (In Scope)
 Registro y autenticación de usuarios.
 Verificación de identidad vía uno o más de estos canales: email, SMS (teléfono), Discord OAuth.
@@ -27,9 +27,9 @@ Logística de envíos o seguimiento de pedidos.
 App móvil nativa (solo web responsive en esta fase).
 Sistema de reputación/calificaciones avanzado con IA o detección automática de fraude (fase futura).
 Multi-idioma (fase futura; MVP en español).
-##3. Alcances Funcionales y No Funcionales
+## 3. Alcances Funcionales y No Funcionales
 3.1 Funcionales
-#	Requisito
+Requisito
 RF01	El usuario puede registrarse con email y contraseña.
 RF02	El usuario puede verificar su cuenta por email (link/código), SMS (OTP) o vinculando su cuenta de Discord (OAuth2).
 RF03	El usuario puede crear una publicación con datos de contacto y métodos de pago con condiciones.
@@ -50,7 +50,7 @@ RNF05	Usabilidad: diseño responsive, accesible (WCAG AA básico).
 RNF06	Privacidad: datos de contacto visibles solo tras registro/login (evitar scraping masivo de bots).
 RNF07	Mantenibilidad: código documentado, separación clara frontend/backend, tests automatizados en flujos críticos (auth, publicación).
 RNF08	Cumplimiento legal: aviso legal claro de que la plataforma no es responsable de transacciones económicas entre usuarios (deslinde de responsabilidad).
-##4. Objetivos Específicos y Medibles
+## 4. Objetivos Específicos y Medibles
 4.1 Funcionalidades (MVP)
 Registro + verificación por al menos 1 de los 3 canales (email/SMS/Discord) — operativo antes del lanzamiento.
 CRUD completo de publicaciones — funcional al 100% en MVP.
@@ -70,7 +70,7 @@ CA03: Un usuario crea una publicación con 2 métodos de pago y condiciones dist
 CA04: Un visitante no logueado busca por categoría → obtiene resultados sin ver datos de contacto directos (debe loguearse para verlos).
 CA05: Un usuario reporta una publicación → el reporte aparece en el panel de administración en tiempo real (o próxima carga, según arquitectura elegida).
 CA06: Ningún endpoint ni componente del sistema procesa, solicita o almacena números de tarjeta, CVV, o credenciales de billeteras — verificado por auditoría de código antes de cada release.
-##5. Stack Tecnológico Propuesto
+## 5. Stack Tecnológico Propuesto
 Frontend: React + HTML/CSS (posible uso de un framework como Next.js si se requiere SSR/SEO para las publicaciones públicas).
 Backend: a definir por el equipo responsable; compatible con Python (ej. FastAPI/Django) u otra alternativa, expuesto vía API REST o GraphQL consumida por el frontend.
 Autenticación/Verificación: proveedor de email transaccional (ej. SendGrid/SES), proveedor SMS (ej. Twilio), Discord OAuth2.
