@@ -1,84 +1,127 @@
-# PROYECTO.md — Plataforma de Publicación de Contactos para Servicios/Productos
+# Especificación de Proyecto: TurnipMarket
+
+**Archivo Fuente:** `PROYECTO.md`  
+**Estado:** Documento Técnico / Refactorizado (v2)  
+
+---
+
 ## 1. Descripción General
 
-Plataforma web donde usuarios (oferentes) publican sus datos de contacto y condiciones de pago para servicios y/o productos que ofrecen. La plataforma no procesa pagos ni actúa como pasarela: solo intermedia el descubrimiento y contacto entre oferente y comprador. El pago y la negociación final ocurren fuera de la app, entre las partes, usando el medio que el oferente haya declarado (Mercado Pago, PayPal, billetera personalizada, etc.).
+Plataforma web enfocada en permitir que usuarios oferentes publiquen sus datos de contacto y condiciones comerciales para productos o servicios.
+
+> **Modelo Operativo y Crédito Ficticio:**  
+> - La plataforma integra una **pasarela de pagos ficticia en entorno de pruebas / simulación**. El dinero cargado o manejado en las cuentas de usuario es **100% ficticio (dinero de prueba)**.  
+> - La web **no procesa ni transacciona dinero real bajo ninguna circunstancia**.  
+> - Para efectuar una transacción o contratación real, los compradores deben usar los **medios de contacto y preferencias de pago declarados** por el oferente (Mercado Pago, PayPal, transferencias, etc.), coordinando directamente fuera del sistema.
+
+---
 
 ## 2. Límites del Sistema (Alcance)
-2.1 Dentro del alcance (In Scope)
-Registro y autenticación de usuarios.
-Verificación de identidad vía uno o más de estos canales: email, SMS (teléfono), Discord OAuth.
-Creación, edición y baja de "publicaciones" (oferta de servicio/producto).
-Cada publicación incluye:
-Título, descripción, categoría, precio de referencia (informativo, no transaccional).
-Medios de contacto del oferente (WhatsApp, email, Discord, Telegram, etc.).
-Métodos de pago aceptados, cada uno con condiciones libres definidas por el usuario (texto/reglas, ej: "Mercado Pago solo con seña del 50%", "PayPal solo compras >$50 USD").
-Búsqueda y filtrado de publicaciones (por categoría, método de pago, ubicación, verificación del oferente).
-Perfil público del usuario con su nivel de verificación visible (badge).
-Sistema de reportes/denuncias de publicaciones o usuarios.
-Panel de administración básico (moderación de publicaciones, gestión de reportes, baja de usuarios).
-Historial simple de publicaciones propias (activas/pausadas/eliminadas).
-Notificaciones básicas (email) ante eventos clave (verificación, reporte recibido, publicación aprobada/rechazada).
-2.2 Fuera del alcance (Out of Scope)
-Procesamiento de pagos dentro de la plataforma (no se integra Mercado Pago SDK, PayPal Checkout, ni ninguna pasarela transaccional real; solo se muestran como "método aceptado" declarado por el usuario).
-Custodia de dinero, escrow, o mediación de disputas económicas.
-Chat/mensajería en tiempo real dentro de la app (la comunicación ocurre por los medios de contacto externos publicados).
-Facturación, emisión de comprobantes fiscales.
-Logística de envíos o seguimiento de pedidos.
-App móvil nativa (solo web responsive en esta fase).
-Sistema de reputación/calificaciones avanzado con IA o detección automática de fraude (fase futura).
-Multi-idioma (fase futura; MVP en español).
+
+### 2.1 Dentro del Alcance (In Scope)
+* **Autenticación y Perfil:**
+  * Registro e inicio de sesión.
+  * Verificación de identidad multicanal: Email, SMS (OTP) y Discord OAuth2.
+  * Muestra pública del nivel de verificación (Badge de confianza).
+* **Simulación de Pasarela y Monedero Ficticio:**
+  * Flujo de prueba que simula la adición de saldo ficticio al perfil del usuario.
+  * Panel explicativo de saldo de demostración/prueba.
+* **Gestión de Publicaciones (CRUD):**
+  * Definición de título, descripción, categoría y precio de referencia.
+  * Configuración de canales de contacto externos (WhatsApp, Telegram, Email, Discord, etc.).
+  * Declaración de métodos de pago aceptados y preferencias/reglas de negociación externa (ej. *"Mercado Pago solo con 50% de seña"*).
+  * Control del historial de publicaciones (activas, pausadas, eliminadas).
+* **Búsqueda y Seguridad:**
+  * Buscador con filtros por categoría, método de pago, ubicación y estado de verificación.
+  * Sistema de reportes/denuncias para perfiles u ofertas sospechosas.
+  * Panel de administración para moderación de contenido y usuarios.
+  * Notificaciones por email ante eventos clave (verificaciones, reportes, moderación).
+
+### 2.2 Fuera del Alcance (Out of Scope)
+* Procesamiento transaccional de dinero real o integraciones bancarias con fondos verdaderos.
+* Custodia de fondos reales (escrow), emisión de facturas fiscales o mediación de disputas económicas reales.
+* Chat/mensajería interna en tiempo real.
+* Logística, envíos o seguimiento de pedidos.
+* App móvil nativa (cobertura exclusiva web responsive en esta fase).
+* Sistemas avanzados de calificaciones por IA o soporte multi-idioma (planeados para fases posteriores).
+
+---
+
 ## 3. Alcances Funcionales y No Funcionales
-3.1 Funcionales
-Requisito
-RF01	El usuario puede registrarse con email y contraseña.
-RF02	El usuario puede verificar su cuenta por email (link/código), SMS (OTP) o vinculando su cuenta de Discord (OAuth2).
-RF03	El usuario puede crear una publicación con datos de contacto y métodos de pago con condiciones.
-RF04	El sistema muestra públicamente qué canal(es) de verificación tiene aprobados el usuario (badge de confianza).
-RF05	Los visitantes pueden buscar/filtrar publicaciones sin necesidad de estar logueados (solo lectura).
-RF06	Solo usuarios verificados en al menos un canal pueden publicar.
-RF07	El usuario puede editar o eliminar sus propias publicaciones.
-RF08	Cualquier usuario logueado puede reportar una publicación o perfil.
-RF09	Un administrador puede revisar reportes y suspender publicaciones/usuarios.
-RF10	El sistema nunca solicita ni almacena datos de tarjetas o credenciales de pasarelas de pago.
-3.2 No Funcionales
-###	Requisito
-RNF01	Seguridad: contraseñas hasheadas (bcrypt/argon2), tokens JWT con expiración, rate limiting en login y envío de OTP.
-RNF02	Disponibilidad: uptime objetivo ≥ 99% mensual.
-RNF03	Rendimiento: tiempo de carga inicial < 2.5s (p95) en conexión 4G.
-RNF04	Escalabilidad: arquitectura que soporte crecimiento horizontal del backend (stateless API).
-RNF05	Usabilidad: diseño responsive, accesible (WCAG AA básico).
-RNF06	Privacidad: datos de contacto visibles solo tras registro/login (evitar scraping masivo de bots).
-RNF07	Mantenibilidad: código documentado, separación clara frontend/backend, tests automatizados en flujos críticos (auth, publicación).
-RNF08	Cumplimiento legal: aviso legal claro de que la plataforma no es responsable de transacciones económicas entre usuarios (deslinde de responsabilidad).
+
+### 3.1 Requisitos Funcionales (RF)
+
+| Código | Requisito | Descripción |
+| :--- | :--- | :--- |
+| **RF01** | Registro de Usuarios | Registro estándar mediante correo electrónico y contraseña. |
+| **RF02** | Verificación Multicanal | Validación de identidad vía Email, SMS u OAuth2 con Discord. |
+| **RF03** | Creación de Oferta | Publicación de bienes/servicios con condiciones de pago personalizadas. |
+| **RF04** | Badge de Confianza | Despliegue público del nivel de verificación del oferente. |
+| **RF05** | Navegación Pública | Exploración de la plataforma disponible para usuarios no autenticados. |
+| **RF06** | Control de Publicación | Exigencia de al menos un canal verificado para publicar. |
+| **RF07** | Gestión de Contenido | Edición, pausa o eliminación de publicaciones propias. |
+| **RF08** | Sistema de Reportes | Módulo de denuncia de irregularidades accesible para usuarios logueados. |
+| **RF09** | Panel de Moderación | Herramienta administrativa para gestión de suspensiones y reportes. |
+| **RF10** | Pasarela Ficticia | Módulo interactivo que simula la recarga de saldo de prueba (dinero ficticio) en la cuenta. |
+
+### 3.2 Requisitos No Funcionales (RNF)
+
+| Código | Categoría | Especificación Técnica |
+| :--- | :--- | :--- |
+| **RNF01** | Seguridad | Contraseñas hasheadas (bcrypt/argon2), tokens JWT y rate-limiting en endpoints sensibles. |
+| **RNF02** | Disponibilidad | Objetivo de uptime mensual ≥ 99.0%. |
+| **RNF03** | Rendimiento | Tiempo de carga inicial < 2.5s (p95) en redes 4G. |
+| **RNF04** | Escalabilidad | Arquitectura stateless orientada al crecimiento horizontal del backend. |
+| **RNF05** | Usabilidad | Diseño adaptable (Responsive Web) acorde a criterios WCAG AA. |
+| **RNF06** | Privacidad | Protección de datos de contacto visibles únicamente para usuarios registrados. |
+| **RNF07** | Mantenibilidad | Código modular con pruebas automatizadas en flujos críticos (Auth y Publicaciones). |
+| **RNF08** | Marco Legal | Inclusión explícita de aviso legal: los saldos son 100% ficticios/demo y no representan dinero real. |
+
+---
+
 ## 4. Objetivos Específicos y Medibles
-4.1 Funcionalidades (MVP)
-Registro + verificación por al menos 1 de los 3 canales (email/SMS/Discord) — operativo antes del lanzamiento.
-CRUD completo de publicaciones — funcional al 100% en MVP.
-Buscador con al menos 3 filtros (categoría, método de pago, verificación) — funcional en MVP.
-Panel de moderación básico — funcional en MVP.
-4.2 Métricas de Calidad
-Métrica	Objetivo
-Tasa de verificación exitosa (OTP/email/Discord)	≥ 95% de intentos válidos completados sin error
-Tiempo promedio de creación de publicación	≤ 3 minutos
-Tasa de publicaciones reportadas sobre el total	≤ 2%
-Errores 5xx en producción	≤ 0.5% de requests
-Cobertura de tests en módulos de auth y publicaciones	≥ 70%
-4.3 Criterios de Aceptación
-CA01: Un usuario no verificado intenta publicar → el sistema bloquea la acción y muestra mensaje claro indicando qué verificación falta.
-CA02: Un usuario completa verificación por SMS → recibe OTP en < 60 segundos y puede validarlo en un intento correcto.
-CA03: Un usuario crea una publicación con 2 métodos de pago y condiciones distintas → ambos se guardan y se muestran correctamente en el detalle público.
-CA04: Un visitante no logueado busca por categoría → obtiene resultados sin ver datos de contacto directos (debe loguearse para verlos).
-CA05: Un usuario reporta una publicación → el reporte aparece en el panel de administración en tiempo real (o próxima carga, según arquitectura elegida).
-CA06: Ningún endpoint ni componente del sistema procesa, solicita o almacena números de tarjeta, CVV, o credenciales de billeteras — verificado por auditoría de código antes de cada release.
+
+### 4.1 Entregables del MVP
+1. **Módulo Auth:** Registro y verificación por al menos 1 canal activo (Email/SMS/Discord).
+2. **Módulo Ofertas:** CRUD completo de publicaciones operativo al 100%.
+3. **Módulo Pasarela Demo:** Sistema de carga y visualización de dinero ficticio para pruebas.
+4. **Módulo Búsqueda:** Búsqueda avanzada con filtros por categoría, pago y verificación.
+5. **Módulo Moderación:** Panel básico funcional para el equipo de administración.
+
+### 4.2 Métricas de Calidad
+
+| Métrica | Objetivo |
+| :--- | :--- |
+| **Tasa de verificación exitosa** | ≥ 95% de intentos válidos completados |
+| **Tiempo de creación de publicación** | ≤ 3 minutos por formulario |
+| **Tasa de publicaciones reportadas** | ≤ 2% del total de publicaciones |
+| **Errores 5xx en producción** | ≤ 0.5% del total de solicitudes |
+| **Cobertura de tests automatizados** | ≥ 70% en código crítico (Auth/Publicaciones) |
+
+### 4.3 Criterios de Aceptación (CA)
+* **CA01:** Si un usuario no verificado intenta publicar, el sistema bloquea la acción e indica qué canal de verificación le falta completar.
+* **CA02:** La recepción y validación de OTP vía SMS se completa en menos de 60 segundos.
+* **CA03:** Los métodos de pago reales y condiciones externas se almacenan y muestran de forma precisa cuando el comprador desea contactar al oferente.
+* **CA04:** La pasarela web simula acreditar fondos ficticios correctamente a la billetera demo del usuario sin solicitar ni validar datos bancarios reales.
+* **CA05:** Los visitantes no autenticados pueden explorar resultados pero los datos de contacto se mantienen ocultos hasta iniciar sesión.
+* **CA06:** Los reportes de usuarios impactan en tiempo real en el panel de administración.
+
+---
+
 ## 5. Stack Tecnológico Propuesto
-Frontend: React + HTML/CSS (posible uso de un framework como Next.js si se requiere SSR/SEO para las publicaciones públicas).
-Backend: a definir por el equipo responsable; compatible con Python (ej. FastAPI/Django) u otra alternativa, expuesto vía API REST o GraphQL consumida por el frontend.
-Autenticación/Verificación: proveedor de email transaccional (ej. SendGrid/SES), proveedor SMS (ej. Twilio), Discord OAuth2.
-Base de datos: relacional (PostgreSQL sugerido) por la naturaleza estructurada de usuarios/publicaciones/reportes.
 
-Nota: el stack de backend queda sujeto a confirmación del equipo/infraestructura que lo administrará, fuera del control directo de este documento.
+| Capa | Tecnologías |
+| :--- | :--- |
+| **Frontend** | React + HTML/CSS (Evaluación de Next.js para SSR/SEO). |
+| **Backend** | API REST / GraphQL basada en Python (FastAPI/Django) u homólogo según el equipo. |
+| **Servicios Auth** | SendGrid/SES (Email), Twilio (SMS), Discord OAuth2. |
+| **Base de Datos** | PostgreSQL (Relacional). |
 
-##6. Riesgos y Consideraciones Legales
-Al no mediar en pagos, la plataforma debe dejar explícito en Términos y Condiciones que no garantiza la buena fe de las transacciones entre usuarios.
-Riesgo de uso de la plataforma para estafas (falsos oferentes) → mitigado con verificación obligatoria + sistema de reportes.
-Posible requerimiento de cumplimiento con normativa de protección de datos personales (ej. Ley 25.326 en Argentina) por almacenar teléfonos/emails.
+---
+
+## 6. Riesgos y Consideraciones Legales
+
+* **Claridad en Entorno Demo:** Indicación visual permanente en la pasarela indicando que el saldo recargado es **dinero ficticio sin valor legal ni monetario**.
+* **Deslinde de Responsabilidad:** Inclusión de Términos y Condiciones indicando el rol neutro de la plataforma respecto a los acuerdos económicos externos acordados entre usuarios.
+* **Mitigación de Fraude:** Implementación de Badges de Verificación e incentivo al reporte comunitario.
+* **Protección de Datos:** Cumplimiento con la normativa de protección de datos personales (ej. Ley 25.326 en Argentina).
